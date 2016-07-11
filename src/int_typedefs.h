@@ -1,6 +1,8 @@
 #ifndef INT_TYPEDEFS_H
 #define INT_TYPEDEFS_H
 
+#include <inttypes.h>
+
 typedef int8_t s8;
 typedef uint8_t u8;
 typedef int16_t s16;

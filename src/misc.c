@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include "misc.h"
 #include "bug_on.h"
 

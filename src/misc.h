@@ -1,9 +1,11 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <linux/types.h>
-
 #include "assume.h"
+#include "int_typedefs.h"
+#include "locks.h"
+
+#include <linux/types.h>
 
 /* Probably won't need to deal with bottom halves. */
 static inline void local_bh_disable() {}

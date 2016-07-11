@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include "preempt.h"
 
 #include "assume.h"

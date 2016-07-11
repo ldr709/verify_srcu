@@ -1,6 +1,8 @@
 #ifndef PREEMPT_H
 #define PREEMPT_H
 
+#include <stdbool.h>
+
 #include "bug_on.h"
 
 /* This flag contains garbage if preempt_disable_count is 0. */
