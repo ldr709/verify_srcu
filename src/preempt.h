@@ -50,7 +50,7 @@ static inline void put_cpu()
 	preempt_enable();
 }
 
-static void might_sleep()
+static inline void might_sleep()
 {
 	BUG_ON(preempt_disable_count);
 }

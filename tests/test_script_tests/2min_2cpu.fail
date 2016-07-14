@@ -1,0 +1,3 @@
+test_cbmc_options="-DMIN_CPUS_FAIL=2"
+min_cpus_fail=2
+default_cpus=2

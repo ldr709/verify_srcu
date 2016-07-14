@@ -2,6 +2,7 @@
 #define ATOMIC_H
 
 #include "barriers.h"
+#include "int_typedefs.h"
 #include <linux/types.h>
 
 #define ATOMIC_INIT(x) { .counter = (x) }

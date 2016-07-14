@@ -1,6 +1,9 @@
 #ifndef PERCPU_H
 #define PERCPU_H
 
+#include <stddef.h>
+#include "bug_on.h"
+
 #define __percpu
 
 /* Ignore alignment, as CBMC doesn't care about false sharing. */

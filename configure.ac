@@ -7,7 +7,26 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CC
 
 AM_PROG_AR
+AC_PROG_LN_S
 AC_PROG_RANLIB
+
+AC_ARG_WITH([linux],
+	[AS_HELP_STRING([--with-linux=dir],
+		       [Specify the location of the Linux kernel source tree])],
+	[],
+	[with_linux=no])
+AS_IF([test "x${with_linux}" = x || test "x${with_linux}" = xyes || \
+       test "x${with_linux}" = xno],
+      [AC_MSG_ERROR([Linux kernel source needed])])
+
+AC_MSG_CHECKING([whether the Linux kernel source is sane])
+AS_IF([test '!' -f "${with_linux}/kernel/rcu/srcu.c"],
+      [AC_MSG_ERROR([${with_linux} does not contain the Linux kernel source])])
+
+dnl Create the linux_source symlink.
+AC_CONFIG_COMMANDS_POST([
+	rm -rf linux_source
+	${LN_S} "${with_linux}" linux_source])
 
 AC_DEFINE([__KERNEL__], [], [Make the kernel think that it is getting compiled])
 AC_DEFINE([_GNU_SOURCE], [], [Tell the standard headers to include everything])

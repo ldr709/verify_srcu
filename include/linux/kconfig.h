@@ -1,1 +1,1 @@
-../../linux_source/include/linux/kconfig.h
+#include <linux_source/linux/kconfig.h>

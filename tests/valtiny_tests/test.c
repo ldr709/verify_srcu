@@ -1,8 +1,4 @@
-#include <pthread.h>
-#include <stdlib.h>
-#include <linux/srcu.h>
-
-#include "bug_on.h"
+#include <src/combined_source.c>
 
 int x;
 int y;

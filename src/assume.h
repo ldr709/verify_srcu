@@ -1,7 +1,7 @@
 #ifndef ASSUME_H
 #define ASSUME_H
 
-// Provide an assumption macro that can be disabled for gcc.
+/* Provide an assumption macro that can be disabled for gcc. */
 #ifdef RUN
 #define assume(x) \
 	do { \

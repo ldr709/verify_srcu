@@ -1,0 +1,23 @@
+Formal verification of Sleepable Read-copy-update using CBMC.
+
+To run the tests, use the following commands.
+autoreconf --install # (If you got the code from git and not a tarball)
+./configure --with-linux=<Path to linux kernel source>
+make
+make check -j<Number of threads>
+
+Current this code checks an included version of SRCU. Eventially it will be able
+to use an external implementation of SRCU.
+
+You may want to pass CFLAGS to configure to enable compiler warnings. I
+recommend using
+CFLAGS="-Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -O2"
+
+The following environment variables specific to this code may be passed to
+make check.
+CBMC: The command to run CBMC. Default: cbmc
+CBMC_FLAGS: Additional flags to pass to CBMC.
+NR_CPUS: Number of cpus to run tests with. Default varies depending on the test.
+
+Generic options for make check are listed in
+https://www.gnu.org/software/automake/manual/html_node/Parallel-Test-Harness.html

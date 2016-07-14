@@ -1,8 +1,11 @@
 #ifndef WORKQUEUES_H
 #define WORKQUEUES_H
 
-#include "int_typedefs.h"
+#include <stdbool.h>
+
 #include "barriers.h"
+#include "bug_on.h"
+#include "int_typedefs.h"
 
 #include <linux/types.h>
 
