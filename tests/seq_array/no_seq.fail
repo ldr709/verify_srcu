@@ -1,0 +1,2 @@
+test_cbmc_options="-DNO_SEQ"
+min_cpus_fail=2

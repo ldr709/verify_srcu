@@ -2,6 +2,7 @@ tests =
 
 include %D%/test_script_tests/Makefile.am
 include %D%/valtiny_tests/Makefile.am
+include %D%/seq_array/Makefile.am
 include %D%/percpu/Makefile.am
 
 TESTS = $(tests)
