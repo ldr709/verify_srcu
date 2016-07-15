@@ -2,6 +2,7 @@ tests =
 
 include %D%/test_script_tests/Makefile.am
 include %D%/valtiny_tests/Makefile.am
+include %D%/percpu/Makefile.am
 
 TESTS = $(tests)
 extra_dist += %D%/test_script.sh $(TESTS)
