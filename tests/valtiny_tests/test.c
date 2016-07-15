@@ -55,5 +55,9 @@ int main(int argc, char *argv[])
 		abort();
 	assert(__unbuffered_tpr_y == 0 || __unbuffered_tpr_x == 1);
 
+#ifdef ASSERT_END
+	assert(0);
+#endif
+
 	return 0;
 }
