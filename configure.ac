@@ -19,9 +19,11 @@ AS_IF([test "x${with_linux}" = x || test "x${with_linux}" = xyes || \
        test "x${with_linux}" = xno],
       [AC_MSG_ERROR([Linux kernel source needed])])
 
-AC_MSG_CHECKING([whether the Linux kernel source is sane])
+AC_MSG_CHECKING([whether the Linux kernel source is at the specified location])
 AS_IF([test '!' -f "${with_linux}/kernel/rcu/srcu.c"],
-      [AC_MSG_ERROR([${with_linux} does not contain the Linux kernel source])])
+      [AC_MSG_RESULT([no])
+       AC_MSG_ERROR([${with_linux} does not contain the Linux kernel source])],
+      [AC_MSG_RESULT([yes])])
 
 dnl Create the linux_source symlink.
 AC_CONFIG_COMMANDS_POST([
