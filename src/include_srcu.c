@@ -10,7 +10,6 @@
 
 #include "int_typedefs.h"
 
-#include "atomic.h"
 #include "barriers.h"
 #include "bug_on.h"
 #include "locks.h"
