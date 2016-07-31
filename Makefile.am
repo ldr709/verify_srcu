@@ -18,5 +18,7 @@ extra_dist += empty_includes
 
 EXTRA_DIST = $(extra_dist)
 
+DISTCLEANFILES = linux_source
+
 # configure needs to know the location of the Linux source code.
 AM_DISTCHECK_CONFIGURE_FLAGS = --with-linux=$(abs_builddir)/linux_source
