@@ -8,6 +8,9 @@
 # CBMC: The command to run CBMC. Default: cbmc
 # CBMC_FLAGS: Additional flags to pass to CBMC
 # NR_CPUS: Number of cpus to run tests with. Default specified by the test
+# SYNC_SRCU_MODE: Choose implementation of synchronize_srcu. Defaults to simple.
+#                 kernel: Version included in the linux kernel source.
+#                 simple: Use try_check_zero directly.
 #
 # The input file is a script that is sourced by this file. It can define any of
 # the following variables to configure the test.
@@ -39,6 +42,18 @@ fi
 
 CBMC=${CBMC:-cbmc}
 
+SYNC_SRCU_MODE=${SYNC_SRCU_MODE:-simple}
+
+case ${SYNC_SRCU_MODE} in
+kernel) sync_srcu_mode_flags="" ;;
+simple) sync_srcu_mode_flags="-DUSE_SIMPLE_SYNC_SRCU" ;;
+
+*)
+	echo "Unrecognized argument '${SYNC_SRCU_MODE}'" 1>&2
+	exit 99
+	;;
+esac
+
 min_cpus_fail=1
 
 c_file=`dirname "$2"`/test.c
@@ -59,7 +74,7 @@ if test $cpus -lt ${min_cpus_fail:-0}; then
 	should_pass="yes"
 fi
 
-cbmc_opts="-DNR_CPUS=${cpus} ${test_cbmc_options} ${CBMC_FLAGS}"
+cbmc_opts="-DNR_CPUS=${cpus} ${sync_srcu_mode_flags} ${test_cbmc_options} ${CBMC_FLAGS}"
 
 echo "Running CBMC: ${CBMC} ${cbmc_opts} ${c_file}"
 if ${CBMC} ${cbmc_opts} "${c_file}"; then

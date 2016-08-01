@@ -19,8 +19,16 @@ static inline void local_bh_enable() {}
 	const typeof( ((type *)0)->member ) *__mptr = (ptr);	\
 	(type *)( (char *)__mptr - offsetof(type,member) );})
 
+#ifndef USE_SIMPLE_SYNC_SRCU
 /* Abuse udelay to make sure that busy loops terminate. */
 #define udelay(x) assume(0)
+
+#else
+
+/* The simple custom synchronize_srcu is ok with try_check_zero failing. */
+#define udelay(x) do { } while (0)
+#endif
+
 #define trace_rcu_torture_read(rcutorturename, rhp, secs, c_old, c) \
 	do { } while (0)
 

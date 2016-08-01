@@ -18,5 +18,14 @@
 #include "percpu.h"
 #include "workqueues.h"
 
+#ifdef USE_SIMPLE_SYNC_SRCU
+#define synchronize_srcu(sp) synchronize_srcu_original(sp)
+#endif
 
 #include "modified_srcu.c"
+
+#ifdef USE_SIMPLE_SYNC_SRCU
+#undef synchronize_srcu
+
+#include "simple_sync_srcu.c"
+#endif
