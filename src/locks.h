@@ -61,8 +61,20 @@ struct lock_impl {
 
 static inline bool lock_impl_trylock(struct lock_impl *lock)
 {
+#ifdef RUN
 	/* TODO: Should this be a test and set? */
 	return __sync_bool_compare_and_swap(&lock->locked, false, true);
+#else
+	__CPROVER_atomic_begin();
+	bool old_locked = lock->locked;
+	lock->locked = true;
+	__CPROVER_atomic_end();
+
+	/* Minimal barrier to prevent accesses leaking out of lock. */
+	__CPROVER_fence("RRfence", "RWfence");
+
+	return !old_locked;
+#endif
 }
 
 static inline void lock_impl_lock(struct lock_impl *lock)
@@ -77,7 +89,19 @@ static inline void lock_impl_lock(struct lock_impl *lock)
 
 static inline void lock_impl_unlock(struct lock_impl *lock)
 {
+#ifdef RUN
 	BUG_ON(!__sync_bool_compare_and_swap(&lock->locked, true, false));
+#else
+	/* Minimal barrier to prevent accesses leaking out of lock. */
+	__CPROVER_fence("RWfence", "WWfence");
+
+	__CPROVER_atomic_begin();
+	bool old_locked = lock->locked;
+	lock->locked = false;
+	__CPROVER_atomic_end();
+
+	BUG_ON(!old_locked);
+#endif
 }
 
 static inline void lock_impl_init(struct lock_impl *lock)
