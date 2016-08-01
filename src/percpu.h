@@ -35,6 +35,20 @@ static inline void free_percpu(void *ptr)
 #define this_cpu_dec(pcp) this_cpu_sub(pcp, 1)
 #define this_cpu_sub(pcp, n) this_cpu_add(pcp, -(typeof(pcp)) (n))
 
+/* Make CBMC use atomics to work around bug. */
+#ifdef RUN
+#define THIS_CPU_ADD_HELPER(ptr, x) (*(ptr) += (x))
+#else
+#define THIS_CPU_ADD_HELPER(ptr, x) \
+	do { \
+		typeof(ptr) this_cpu_add_helper_ptr = (ptr); \
+		typeof(ptr) this_cpu_add_helper_x = (x); \
+		__CPROVER_atomic_begin(); \
+		*(this_cpu_add_helper_ptr) += (this_cpu_add_helper_x); \
+		__CPROVER_atomic_end(); \
+	} while (0)
+#endif
+
 /*
  * For some reason CBMC needs an atomic operation even though this is percpu
  * data.
@@ -42,17 +56,15 @@ static inline void free_percpu(void *ptr)
 #define __this_cpu_add(pcp, n) \
 	do { \
 		BUG_ON(preemptible()); \
-		(void) __sync_add_and_fetch( \
-			per_cpu_ptr(&(pcp), thread_cpu_id), \
-			(typeof(pcp)) (n)); \
+		THIS_CPU_ADD_HELPER(per_cpu_ptr(&(pcp), thread_cpu_id), \
+				    (typeof(pcp)) (n)); \
 	} while (0)
 
 #define this_cpu_add(pcp, n) \
 	do { \
 		int this_cpu_add_impl_cpu = get_cpu(); \
-		(void) __sync_add_and_fetch( \
-			per_cpu_ptr(&(pcp), this_cpu_add_impl_cpu), \
-			(typeof(pcp)) (n)); \
+		THIS_CPU_ADD_HELPER(per_cpu_ptr(&(pcp), this_cpu_add_impl_cpu), \
+				    (typeof(pcp)) (n)); \
 		put_cpu(); \
 	} while (0)
 
