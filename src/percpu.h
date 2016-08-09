@@ -28,7 +28,7 @@ static inline void free_percpu(void *ptr)
 	((typeof(ptr)) ((char*) (ptr) + PERCPU_OFFSET * cpu))
 
 #define __this_cpu_inc(pcp) __this_cpu_add(pcp, 1)
-#define __this_cpu_dec(pcp) __this_cpu_dec(pcp, 1)
+#define __this_cpu_dec(pcp) __this_cpu_sub(pcp, 1)
 #define __this_cpu_sub(pcp, n) __this_cpu_add(pcp, -(typeof(pcp)) (n))
 
 #define this_cpu_inc(pcp) this_cpu_add(pcp, 1)
