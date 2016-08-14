@@ -20,6 +20,10 @@
 
 #include <linux/srcu.h>
 
+/* Functions needed from modify_srcu.c */
+bool try_check_zero(struct srcu_struct *sp, int idx, int trycount);
+void srcu_flip(struct srcu_struct *sp);
+
 /* Simpler implementation of synchronize_srcu that ignores batching. */
 void synchronize_srcu(struct srcu_struct *sp)
 {

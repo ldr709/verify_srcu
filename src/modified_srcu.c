@@ -341,7 +341,7 @@ EXPORT_SYMBOL_GPL(__srcu_read_unlock);
  * the caller should ensures the ->completed is not changed while checking
  * and idx = (->completed & 1) ^ 1
  */
-static bool try_check_zero(struct srcu_struct *sp, int idx, int trycount)
+bool try_check_zero(struct srcu_struct *sp, int idx, int trycount)
 {
 	for (;;) {
 		if (srcu_readers_active_idx_check(sp, idx))
@@ -357,7 +357,7 @@ static bool try_check_zero(struct srcu_struct *sp, int idx, int trycount)
  * use the other rank of the ->c[] and ->seq[] arrays.  This allows
  * us to wait for pre-existing readers in a starvation-free manner.
  */
-static void srcu_flip(struct srcu_struct *sp)
+void srcu_flip(struct srcu_struct *sp)
 {
 	sp->completed++;
 }
