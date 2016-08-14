@@ -52,7 +52,7 @@ static inline void lock_impl_init(struct lock_impl *lock)
 
 #define LOCK_IMPL_INITIALIZER {.mutex = PTHREAD_MUTEX_INITIALIZER}
 
-#else
+#else /* !defined(PTHREAD_LOCK) */
 /* Spinlock that assumes that it always gets the lock immediately. */
 
 struct lock_impl {
@@ -69,9 +69,6 @@ static inline bool lock_impl_trylock(struct lock_impl *lock)
 	bool old_locked = lock->locked;
 	lock->locked = true;
 	__CPROVER_atomic_end();
-
-	/* Minimal barrier to prevent accesses leaking out of lock. */
-	__CPROVER_fence("RRfence", "RWfence");
 
 	return !old_locked;
 #endif
@@ -92,9 +89,6 @@ static inline void lock_impl_unlock(struct lock_impl *lock)
 #ifdef RUN
 	BUG_ON(!__sync_bool_compare_and_swap(&lock->locked, true, false));
 #else
-	/* Minimal barrier to prevent accesses leaking out of lock. */
-	__CPROVER_fence("RWfence", "WWfence");
-
 	__CPROVER_atomic_begin();
 	bool old_locked = lock->locked;
 	lock->locked = false;
@@ -111,7 +105,7 @@ static inline void lock_impl_init(struct lock_impl *lock)
 
 #define LOCK_IMPL_INITIALIZER {.locked = false}
 
-#endif
+#endif /* !defined(PTHREAD_LOCK) */
 
 /*
  * Implement spinlocks using the lock mechanism. Wrap the lock to prevent mixing
@@ -134,10 +128,20 @@ static inline void spin_lock(spinlock_t *lock)
 {
 	preempt_disable();
 	lock_impl_lock(&lock->internal_lock);
+
+#ifndef RUN
+	/* Minimal barrier to prevent accesses leaking out of lock. */
+	__CPROVER_fence("RRfence", "RWfence");
+#endif
 }
 
 static inline void spin_unlock(spinlock_t *lock)
 {
+#ifndef RUN
+	/* Minimal barrier to prevent accesses leaking out of lock. */
+	__CPROVER_fence("RWfence", "WWfence");
+#endif
+
 	lock_impl_unlock(&lock->internal_lock);
 	preempt_enable();
 }

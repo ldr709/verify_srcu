@@ -1,0 +1,1 @@
+test_cbmc_options="-DNO_SMP_MB"

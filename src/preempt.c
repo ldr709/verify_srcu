@@ -64,6 +64,10 @@ void preempt_disable()
 	assume(thread_cpu_id >= 0);
 	assume(thread_cpu_id < NR_CPUS);
 	lock_impl_lock(&cpu_preemption_locks[thread_cpu_id]);
+
+	/* Don't bother with a fence, as all per-cpu accesses have to be
+	   atomics (due to a CBMC bug), which are syncronized with the lock
+	   anyway. */
 }
 
 void preempt_enable()
@@ -72,6 +76,8 @@ void preempt_enable()
 
 	if (--preempt_disable_count)
 		return;
+
+	/* Don't bother with a fence, for the same reason. */
 
 	lock_impl_unlock(&cpu_preemption_locks[thread_cpu_id]);
 }
