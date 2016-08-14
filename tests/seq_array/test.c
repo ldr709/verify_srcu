@@ -73,10 +73,14 @@ void *thread_process_reader(void *arg)
 	int idx;
 	struct state *read_state = (struct state *) arg;
 
+#ifndef FORCE_FAILURE_2
 	idx = srcu_read_lock(&ss);
+#endif
 	read_state->x = writer.x;
 	read_state->y = writer.y;
+#ifndef FORCE_FAILURE_2
 	srcu_read_unlock(&ss, idx);
+#endif
 
 	return NULL;
 }

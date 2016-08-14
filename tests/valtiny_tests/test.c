@@ -12,14 +12,18 @@ void rcu_reader(void)
 {
 	int idx;
 
+#ifndef FORCE_FAILURE_3
 	idx = srcu_read_lock(&ss);
+#endif
 	__unbuffered_tpr_x = x;
 #ifdef FORCE_FAILURE
 	srcu_read_unlock(&ss, idx);
 	idx = srcu_read_lock(&ss);
 #endif
 	__unbuffered_tpr_y = y;
+#ifndef FORCE_FAILURE_3
 	srcu_read_unlock(&ss, idx);
+#endif
 }
 
 void *thread_update(void *arg)
