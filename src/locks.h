@@ -154,6 +154,7 @@ static inline void spin_unlock(spinlock_t *lock)
  */
 static inline bool spin_trylock(spinlock_t *lock)
 {
+	preempt_disable();
 	return lock_impl_trylock(&lock->internal_lock);
 }
 
