@@ -206,7 +206,7 @@ static bool srcu_readers_active_idx_check(struct srcu_struct *sp, int idx)
 	 * increment of ->seq[], then the call to srcu_readers_active_idx()
 	 * must see the increment of ->c[].
 	 */
-	smp_mb(); /* A */
+	sync_smp_mb(); /* A */
 
 	/*
 	 * Note that srcu_readers_active_idx() can incorrectly return
@@ -251,7 +251,7 @@ static bool srcu_readers_active_idx_check(struct srcu_struct *sp, int idx)
 	 * srcu_readers_seq_idx() will differ, and thus the validation
 	 * step below suffices.
 	 */
-	smp_mb(); /* D */
+	sync_smp_mb(); /* D */
 
 	return srcu_readers_seq_idx(sp, idx) == seq;
 }
@@ -304,7 +304,7 @@ int __srcu_read_lock(struct srcu_struct *sp)
 
 	idx = READ_ONCE(sp->completed) & 0x1;
 	__this_cpu_inc(sp->per_cpu_ref->c[idx]);
-	smp_mb(); /* B */  /* Avoid leaking the critical section. */
+	rs_smp_mb(); /* B */  /* Avoid leaking the critical section. */
 	__this_cpu_inc(sp->per_cpu_ref->seq[idx]);
 	return idx;
 }
@@ -318,7 +318,7 @@ EXPORT_SYMBOL_GPL(__srcu_read_lock);
  */
 void __srcu_read_unlock(struct srcu_struct *sp, int idx)
 {
-	smp_mb(); /* C */  /* Avoid leaking the critical section. */
+	rs_smp_mb(); /* C */  /* Avoid leaking the critical section. */
 	this_cpu_dec(sp->per_cpu_ref->c[idx]);
 }
 EXPORT_SYMBOL_GPL(__srcu_read_unlock);

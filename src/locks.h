@@ -52,7 +52,7 @@ static inline void lock_impl_init(struct lock_impl *lock)
 
 #define LOCK_IMPL_INITIALIZER {.mutex = PTHREAD_MUTEX_INITIALIZER}
 
-#else
+#else /* !defined(PTHREAD_LOCK) */
 /* Spinlock that assumes that it always gets the lock immediately. */
 
 struct lock_impl {
@@ -111,7 +111,7 @@ static inline void lock_impl_init(struct lock_impl *lock)
 
 #define LOCK_IMPL_INITIALIZER {.locked = false}
 
-#endif
+#endif /* !defined(PTHREAD_LOCK) */
 
 /*
  * Implement spinlocks using the lock mechanism. Wrap the lock to prevent mixing
@@ -132,14 +132,20 @@ static inline void spin_lock_init(spinlock_t *lock)
 
 static inline void spin_lock(spinlock_t *lock)
 {
+	/* Spin locks also need to be removed in order to eliminate all memory
+	   barriers. They are only used by the write side anyway. */
+#ifndef NO_SYNC_SMP_MB
 	preempt_disable();
 	lock_impl_lock(&lock->internal_lock);
+#endif
 }
 
 static inline void spin_unlock(spinlock_t *lock)
 {
+#ifndef NO_SYNC_SMP_MB
 	lock_impl_unlock(&lock->internal_lock);
 	preempt_enable();
+#endif
 }
 
 /* Don't bother with interrupts */
@@ -154,8 +160,12 @@ static inline void spin_unlock(spinlock_t *lock)
  */
 static inline bool spin_trylock(spinlock_t *lock)
 {
+#ifndef NO_SYNC_SMP_MB
 	preempt_disable();
 	return lock_impl_trylock(&lock->internal_lock);
+#else
+	return true;
+#endif
 }
 
 struct completion {
