@@ -39,12 +39,19 @@ static inline void free_percpu(void *ptr)
 #ifdef RUN
 #define THIS_CPU_ADD_HELPER(ptr, x) (*(ptr) += (x))
 #else
+/* Split the atomic into a read and a write so that it has the least possible
+   ordering. */
 #define THIS_CPU_ADD_HELPER(ptr, x) \
 	do { \
 		typeof(ptr) this_cpu_add_helper_ptr = (ptr); \
 		typeof(ptr) this_cpu_add_helper_x = (x); \
+		typeof(*ptr) this_cpu_add_helper_temp; \
 		__CPROVER_atomic_begin(); \
-		*(this_cpu_add_helper_ptr) += (this_cpu_add_helper_x); \
+		this_cpu_add_helper_temp = *(this_cpu_add_helper_ptr); \
+		__CPROVER_atomic_end(); \
+		this_cpu_add_helper_temp += this_cpu_add_helper_x; \
+		__CPROVER_atomic_begin(); \
+		*(this_cpu_add_helper_ptr) = this_cpu_add_helper_temp; \
 		__CPROVER_atomic_end(); \
 	} while (0)
 #endif
