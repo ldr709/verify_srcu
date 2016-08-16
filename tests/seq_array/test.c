@@ -63,6 +63,7 @@ void *thread_update(void *arg)
 #ifndef FORCE_FAILURE
 	synchronize_srcu(&ss);
 #endif
+	might_sleep();
 	writer.y = 1;
 
 	return NULL;
@@ -76,11 +77,15 @@ void *thread_process_reader(void *arg)
 #ifndef FORCE_FAILURE_2
 	idx = srcu_read_lock(&ss);
 #endif
+	might_sleep();
+
 	read_state->x = writer.x;
 	read_state->y = writer.y;
+
 #ifndef FORCE_FAILURE_2
 	srcu_read_unlock(&ss, idx);
 #endif
+	might_sleep();
 
 	return NULL;
 }
