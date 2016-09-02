@@ -22,7 +22,7 @@
 #define synchronize_srcu(sp) synchronize_srcu_original(sp)
 #endif
 
-#include "modified_srcu.c"
+#include <srcu.c>
 
 #ifdef USE_SIMPLE_SYNC_SRCU
 #undef synchronize_srcu

@@ -1,1 +1,1 @@
-headers += %D%/kconfig.h %D%/srcu.h %D%/types.h
+headers += %D%/kconfig.h %D%/types.h
