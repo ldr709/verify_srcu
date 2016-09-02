@@ -6,8 +6,9 @@ autoreconf --install # (If you got the code from git and not a tarball)
 make
 make check -j<Number of threads>
 
-Currently this code checks an included version of SRCU. Eventually it will be
-able to use an external implementation of SRCU.
+The version of SRCU in the linux source tree you pass to configure will be used
+for verification. Currently only include/linux/srcu.h and kernel/rcu/srcu.c will
+be used.
 
 You may want to pass CFLAGS to configure to enable compiler warnings. I
 recommend using
