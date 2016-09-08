@@ -295,6 +295,32 @@ function print_fields(n) {
 			continue;
 		}
 
+		# Skip definition of rcu_synchronize, since it is already
+		# defined in misc.h. Only present in old versions of srcu.
+		if (brace_nesting == 0 && paren_nesting == 0 &&
+		    $1 == "struct" && $2 == "rcu_synchronize" &&
+		    $0 ~ "^struct(" FS ")+rcu_synchronize(" FS ")+\\{") {
+			shift_fields(2, 0);
+			while (brace_nesting) {
+				if (NF < 2)
+					read_line();
+				shift_fields(1, 0);
+			}
+		}
+
+		# Skip definition of wakeme_after_rcu for the same reason
+		if (brace_nesting == 0 && $1 == "static" && $2 == "void" &&
+		    $3 == "wakeme_after_rcu") {
+			while (NF < 5)
+				read_line();
+			shift_fields(3, 0);
+			do {
+				while (NF < 3)
+					read_line();
+				shift_fields(1, 0);
+			} while (paren_nesting || brace_nesting);
+		}
+
 		# Just print out the input code by default.
 		print_fields(1);
 	}
