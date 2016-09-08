@@ -80,7 +80,8 @@ function read_line() {
 }
 
 # Print out field separators and update variables that depend on them. Only
-# print if p is true.
+# print if p is true. Call with sep="" and p=0 to print out the last field
+# separator.
 function update_fieldsep(sep, p) {
 	# Count braces
 	sep_tmp = sep;
@@ -319,6 +320,25 @@ function print_fields(n) {
 					read_line();
 				shift_fields(1, 0);
 			} while (paren_nesting || brace_nesting);
+		}
+
+		if ($1 ~ /^(unsigned|long)$/ && NF < 3) {
+			read_line();
+			continue;
+		}
+
+		# Give srcu_batches_completed the correct type for old SRCU.
+		if (brace_nesting == 0 && $1 == "long" &&
+		    $2 == "srcu_batches_completed") {
+			update_fieldsep("", 0);
+			printf("unsigned ") > outputfile;
+			print_fields(2);
+			continue;
+		}
+		if (brace_nesting == 0 && $1 == "unsigned" && $2 == "long" &&
+		    $3 == "srcu_batches_completed") {
+			print_fields(3);
+			continue;
 		}
 
 		# Just print out the input code by default.
