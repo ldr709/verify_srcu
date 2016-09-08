@@ -51,4 +51,7 @@ void wakeme_after_rcu(struct rcu_head *head);
 bool rcu_gp_is_normal(void);
 bool rcu_gp_is_expedited(void);
 
+/* Do the same for old versions of rcu. */
+#define rcu_expedited (rcu_gp_is_expedited())
+
 #endif
