@@ -20,7 +20,7 @@ nodist_headers += $(modified_srcu_h)
 BUILT_SOURCES = $(modified_srcu_output)
 MOSTLYCLEANFILES = $(modified_srcu_output)
 extra_dist += $(modified_srcu_script)
-$(modified_srcu_output) : $(modified_srcu_script) Makefile $(modified_srcu_input)
+$(modified_srcu_c) : $(modified_srcu_script) Makefile $(modified_srcu_input)
 	$(MKDIR_P) include/linux
 	$(AWK) -f $(modified_srcu_script) $(modified_srcu_input) $(modified_srcu_output)
 $(modified_srcu_h) : $(modified_srcu_c)
