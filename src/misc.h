@@ -44,6 +44,7 @@ void wakeme_after_rcu(struct rcu_head *head);
 
 #define rcu_lock_acquire(a) do { } while (0)
 #define rcu_lock_release(a) do { } while (0)
+#define rcu_lockdep_assert(c, s) do { } while (0)
 #define RCU_LOCKDEP_WARN(c, s) do { } while (0)
 
 /* Let CBMC non-deterministically choose switch between normal and expedited. */
