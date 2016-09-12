@@ -63,7 +63,19 @@ BEGIN {
 
 # Combine the next line into $0.
 function combine_line() {
-	getline next_line;
+	ret = getline next_line;
+	if (ret == 0) {
+		# Don't allow two consecutive getlines at the end of the file
+		if (eof_found) {
+			print "Error: expected more input." > "/dev/stderr";
+			exit 1;
+		} else {
+			eof_found = 1;
+		}
+	} else if (ret == -1) {
+		print "Error reading next line of file" FILENAME > "/dev/stderr";
+		exit 1;
+	}
 	$0 = $0 "\n" next_line;
 }
 
