@@ -40,9 +40,9 @@ void synchronize_srcu(struct srcu_struct *sp)
 
 	/* For comments see srcu_advance_batches. */
 
-	assume(try_check_zero(sp, idx, 1));
+	assume(try_check_zero(sp, idx, trycount));
 
 	srcu_flip(sp);
 
-	assume(try_check_zero(sp, idx^1, 1));
+	assume(try_check_zero(sp, idx^1, trycount));
 }
