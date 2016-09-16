@@ -1,8 +1,13 @@
 #include <src/combined_source.c>
 
-DEFINE_PER_CPU(struct srcu_struct_array, per_cpu_data);
+struct test_per_cpu_array {
+	unsigned long c[2];
+	unsigned long seq[2];
+};
 
-struct srcu_struct_array __percpu *per_cpu_ref = &per_cpu_data;
+DEFINE_PER_CPU(struct test_per_cpu_array, per_cpu_data);
+
+struct test_per_cpu_array __percpu *per_cpu_ref = &per_cpu_data;
 
 void *thread(void *arg)
 {
