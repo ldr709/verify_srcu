@@ -1,5 +1,9 @@
 Formal verification of Sleepable Read-copy-update using CBMC.
 
+This project has been moved into the Linux kernel source tree. See
+https://github.com/torvalds/linux/tree/master/tools/testing/selftests/rcutorture/formal/srcu-cbmc
+and https://lkml.org/lkml/2017/1/24/736
+
 To run the tests, use the following commands.
 autoreconf --install # (If you got the code from git and not a tarball)
 ./configure --with-linux=<Path to linux kernel source>
